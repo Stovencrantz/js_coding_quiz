@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<title>JavaScript Coding Quiz</title>
+</head>
+<body>
+
+  <div class="container">
+    <div><h1 id="header">JavaScript Coding Quiz!</h1></div>
+    <div class="time">
+      <div id="minutes">00</div>
+      <div id="seconds">00</div>
+    </div>
+    <div id="startBtn"><button>Start Quiz</button></div>
+    <div>
+      <h3 id="score">Score: <span id="scoreVal"></span></h3>
+    </div>
+    <div id="problem_group">
+      <form >
+        <p id="question">Our question goes here</p>
+        <input type="radio" id="true" value="True">
+        <label for="true">True</label>
+        <input type="radio" id="false" value="False">
+        <label for="false">False</label>
+        <button id="submitBtn">Next</button>
+      </form>
+    </div>
+  </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src = "script.js"></script>
+</body>
+</html>
