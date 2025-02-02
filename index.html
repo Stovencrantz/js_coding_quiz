@@ -12,28 +12,34 @@
 </head>
 <body>
 
-  <div class="container">
+  <div class="container-md mx-3 px-3">
     <div><h1 id="header">JavaScript Coding Quiz!</h1></div>
     <div class="time">
       <div id="minutes">00</div>
       <div id="seconds">00</div>
     </div>
-    <div ><button class="btn" id="startBtn">Start Quiz</button></div>
     <div>
-      <h3 id="score">Score: <span id="scoreVal"></span></h3>
+      <button class="btn" id="startBtn">Start Quiz</button>
+    </div>
+    <div id="score">
+      <h3>Score: </h3>
+      <span id="scoreVal"></span>
     </div>
     <div id="problem_group">
-      <form>
+      <form name="submission">
         <label for="question">Question:</label>
         <p id="question">The sky is blue.</p>
         <label>
             <input type="radio" name="answer" value="true"> True
         </label>
         <label>
-            <input type="radio" name="answer" value="false"> False
+            <input type="radio" name="answer" value="false" checked> False
         </label>
-        <button class="btn" id="submitBtn" type="submit">Submit</button>
+        <button class="btn" id="submitBtn" type="submit" disabled>Submit</button>
     </form>
+    <div>
+      <button class="btn" id = "resetBtn">Reset Score</button>
+    </div>
     </div>
   </div>
 

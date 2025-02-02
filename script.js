@@ -1,13 +1,15 @@
 const problemGroupEl = document.getElementById("problem_group");
 const minutesDisplayEl = document.getElementById("minutes");
 const secondsDisplayEl = document.getElementById("seconds");
-const scoreEl = document.getElementById("scoreVal");
+const scoreValEl = document.getElementById("scoreVal");
 const startBtnEl = document.getElementById("startBtn");
+const formEl = document.querySelector("form[name='submission']");
 const questionEl = document.getElementById("question"); //get current question element
 const answerEl = document.getElementById("answer"); // get value of submitted form
 const submitBtn = document.getElementById("submitBtn");
+const resetBtn = document.getElementById("resetBtn");
 
-const questions = [
+const questionsObj = [
   {
     "question": "JavaScript is a dynamically typed language.",
     "answer": true
@@ -50,32 +52,53 @@ const questions = [
   }
 ]
 
-let index;
-let time = 1;
+let index = 0;
+let time = 2;
 let totalSeconds=0;
 let secondsElapsed=0;
-
-const problem = {
+let scoreVal=0;
+let currentProblem = {
   question: "",
-  answer: "",
-  render: function() {
-    this.question = problems[i].question;
-    questionEl.textContent = ""; //questionEl.textContent will equal the current question in our array
-  },
-  validate: function() {
-    //validate the users answer to the corresponding answer in the question array
+  answer: ""
+};
 
-  }
+
+function populateQuestion() {
+  // render one question on load
+  // all other questions rendered after user clicks submit.
+  // Render question -> Submit Answer -> validate answer -> update score -> render score -> render question
+  console.log(`Question #${index}`);
+  questionEl.textContent = questionsObj[index].question;
 }
 
-const score = {
-  scoreVal: 0,
-  update: function() {
-    this.scoreVal++
-  },
-  render: function() {
-    scoreEl.textContent = this.scoreVal;
+function validateAnswer() {
+  currentProblem.question = questionEl.textContent;
+  currentProblem.answer = document.querySelector(`[name='answer']:checked`).value;
+
+  console.assert(currentProblem.question = questionsObj[index].question, "Questions do not match");
+  if(currentProblem.question = questionsObj[index].question) { // comparing string to boolean
+    console.log("questions match");
+
+    if(currentProblem.answer = questionsObj[index].answer) { //comparing string to boolean
+      // if userAnswer = answer sheet answer, increment score
+      console.assert(currentProblem.answer = questionsObj[index].answer, "Answers do not match");
+      updateScore();
+    } else {
+      console.log(`Answers do not match: ${typeof(currentProblem.answer)} vs ${typeof(questionsObj[index].answer)}`);
+    }
+  } else {
+    console.log("Question Mismatch");
   }
+  index++;
+  populateQuestion();
+}
+
+function updateScore() {
+  // iterate on the score
+  // render new score value to screen
+  scoreVal++;
+  scoreValEl.textContent = scoreVal;
+  console.log("updatingScore: ", scoreVal);
 }
 
 function calculateTime(min) {
@@ -93,37 +116,52 @@ function renderTime(min,sec) {
   secondsDisplayEl.textContent = sec;
 }
 
-function renderProblem(index) {
-  let questionTotal = questions.length;
-
-}
-
 function startQuiz() {
   //Do some quiz stuff
   if(localStorage.getItem("sk_score")) {
     scoreVal = localStorage.getItem("sk_score");
     scoreEl.textContent = scoreVal;
   }
+  index = 0; //reset index start at bottom of quesiton list
+
   //begin timeinterval and include functions here. 
   calculateTime(time);
+  submitBtn.removeAttribute("disabled", "");
   secondsElapsed++;
   let minutes;
   let seconds;
   // console.trace(timer.secondsElapsed)
   // console.trace(timer.totalSeconds)
   console.trace("totalSeconds: ", totalSeconds)
-  renderProblem();
   interval = setInterval(function() {
     minutes = Math.floor((totalSeconds-secondsElapsed)/60)
     seconds = Math.floor((totalSeconds-secondsElapsed)%60);
-    console.log("Minutes: " + minutes + "|| Seconds: " + seconds);
+    //console.log("Minutes: " + minutes + "|| Seconds: " + seconds);
     renderTime(minutes,seconds);
     if(secondsElapsed >= totalSeconds) {
       clearInterval(interval)
     }
     secondsElapsed++;
-
   }, 1000)
+  populateQuestion();
+}
+
+function endQuiz() {
+  localStorage.setItem("scoreVal", scoreVal);
+}
+
+function clearScore() {
+  localStorage.deleteItem("scoreVal")
+  scoreVal = 0;
+}
+
+// initialize initial score values 
+function init() {
+  if(localStorage.getItem("scoreVal")) {
+    scoreVal = localStorage.getItem("scoreVal");
+  }
+  scoreValEl.textContent = scoreVal;
+  console.log("initializing")
 }
 
 startBtnEl.addEventListener("click", (event) => {
@@ -131,9 +169,16 @@ startBtnEl.addEventListener("click", (event) => {
   startBtnEl.setAttribute("disabled", '');
 })
 submitBtn.addEventListener("click", (event) => {
-  document.preventDefault();
-  problems.validate();
-  renderProblem(i);
+  event.preventDefault();
+  // Render question -> Submit Answer -> validate answer -> update score -> render score -> render question
+  validateAnswer();
+  if (index >= questionsObj.length) {
+    submitBtn.setAttribute("disabled", '');
+    alert("You are done!")
+  }
+})
+resetBtn.addEventListener("click", (event) => {
+  resetScore();
 })
 
 //WHEN startQuiz clicked
@@ -147,4 +192,5 @@ submitBtn.addEventListener("click", (event) => {
   // THEN render score
 // update score in localStorage
 // pull value from localStorage on page load
+init();
  
