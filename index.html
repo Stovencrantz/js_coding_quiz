@@ -18,19 +18,22 @@
       <div id="minutes">00</div>
       <div id="seconds">00</div>
     </div>
-    <div id="startBtn"><button>Start Quiz</button></div>
+    <div ><button class="btn" id="startBtn">Start Quiz</button></div>
     <div>
       <h3 id="score">Score: <span id="scoreVal"></span></h3>
     </div>
     <div id="problem_group">
-      <form >
-        <p id="question">Our question goes here</p>
-        <input type="radio" id="true" value="True">
-        <label for="true">True</label>
-        <input type="radio" id="false" value="False">
-        <label for="false">False</label>
-        <button id="submitBtn">Next</button>
-      </form>
+      <form>
+        <label for="question">Question:</label>
+        <p id="question">The sky is blue.</p>
+        <label>
+            <input type="radio" name="answer" value="true"> True
+        </label>
+        <label>
+            <input type="radio" name="answer" value="false"> False
+        </label>
+        <button class="btn" id="submitBtn" type="submit">Submit</button>
+    </form>
     </div>
   </div>
 
