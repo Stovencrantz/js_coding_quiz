@@ -8,6 +8,7 @@ const questionEl = document.getElementById("question"); //get current question e
 const answerEl = document.getElementById("answer"); // get value of submitted form
 const submitBtn = document.getElementById("submitBtn");
 const resetBtn = document.getElementById("resetBtn");
+const messageEl = document.getElementById("message");
 
 const questionsObj = [
   {
@@ -53,7 +54,7 @@ const questionsObj = [
 ]
 
 let index = 0;
-let time = 2;
+let time = 2; // 2 minutes
 let totalSeconds=0;
 let secondsElapsed=0;
 let scoreVal=0;
@@ -67,7 +68,7 @@ function populateQuestion() {
   // render one question on load
   // all other questions rendered after user clicks submit.
   // Render question -> Submit Answer -> validate answer -> update score -> render score -> render question
-  console.log(`Question #${index}`);
+  console.log(`Question #${index+1}`);  //question 1 starts at index=0;
   questionEl.textContent = questionsObj[index].question;
 }
 
@@ -77,12 +78,11 @@ function validateAnswer() {
 
   console.assert(currentProblem.question = questionsObj[index].question, "Questions do not match");
   if(currentProblem.question = questionsObj[index].question) { // comparing string to boolean
-    console.log("questions match");
 
     if(currentProblem.answer = questionsObj[index].answer) { //comparing string to boolean
       // if userAnswer = answer sheet answer, increment score
-      console.assert(currentProblem.answer = questionsObj[index].answer, "Answers do not match");
-      updateScore();
+      scoreVal++;
+      renderScore();
     } else {
       console.log(`Answers do not match: ${typeof(currentProblem.answer)} vs ${typeof(questionsObj[index].answer)}`);
     }
@@ -90,13 +90,12 @@ function validateAnswer() {
     console.log("Question Mismatch");
   }
   index++;
-  populateQuestion();
+  (index >= questionsObj.length) ? endQuiz() : populateQuestion(); // while index count is lower than length of array, populate questions
 }
 
-function updateScore() {
+function renderScore() {
   // iterate on the score
   // render new score value to screen
-  scoreVal++;
   scoreValEl.textContent = scoreVal;
   console.log("updatingScore: ", scoreVal);
 }
@@ -118,15 +117,14 @@ function renderTime(min,sec) {
 
 function startQuiz() {
   //Do some quiz stuff
-  if(localStorage.getItem("sk_score")) {
-    scoreVal = localStorage.getItem("sk_score");
-    scoreEl.textContent = scoreVal;
-  }
+
   index = 0; //reset index start at bottom of quesiton list
+  formEl.hidden = false;
+  messageEl.hidden = true;
 
   //begin timeinterval and include functions here. 
   calculateTime(time);
-  submitBtn.removeAttribute("disabled", "");
+  submitBtn.disabled = false;
   secondsElapsed++;
   let minutes;
   let seconds;
@@ -136,23 +134,33 @@ function startQuiz() {
   interval = setInterval(function() {
     minutes = Math.floor((totalSeconds-secondsElapsed)/60)
     seconds = Math.floor((totalSeconds-secondsElapsed)%60);
-    //console.log("Minutes: " + minutes + "|| Seconds: " + seconds);
     renderTime(minutes,seconds);
+    //End quiz when timer ends
     if(secondsElapsed >= totalSeconds) {
-      clearInterval(interval)
+      clearInterval(interval);
+      endQuiz();    
     }
     secondsElapsed++;
   }, 1000)
+
+  //populate the first question
   populateQuestion();
 }
 
 function endQuiz() {
+  clearInterval(interval);
   localStorage.setItem("scoreVal", scoreVal);
+  console.log("The quiz is finished. Your score is: ", localStorage.getItem("scoreVal"));
+  secondsElapsed = 0;
+  formEl.hidden = true;
+  messageEl.hidden = false;
+  startBtnEl.disabled = false;
 }
 
-function clearScore() {
-  localStorage.deleteItem("scoreVal")
+function resetScore() {
+  localStorage.removeItem("scoreVal")
   scoreVal = 0;
+  renderScore();
 }
 
 // initialize initial score values 
@@ -161,25 +169,8 @@ function init() {
     scoreVal = localStorage.getItem("scoreVal");
   }
   scoreValEl.textContent = scoreVal;
-  console.log("initializing")
+  questionEl.textContent = questionsObj[index].question;
 }
-
-startBtnEl.addEventListener("click", (event) => {
-  startQuiz();
-  startBtnEl.setAttribute("disabled", '');
-})
-submitBtn.addEventListener("click", (event) => {
-  event.preventDefault();
-  // Render question -> Submit Answer -> validate answer -> update score -> render score -> render question
-  validateAnswer();
-  if (index >= questionsObj.length) {
-    submitBtn.setAttribute("disabled", '');
-    alert("You are done!")
-  }
-})
-resetBtn.addEventListener("click", (event) => {
-  resetScore();
-})
 
 //WHEN startQuiz clicked
   // THEN begin countdown
@@ -192,5 +183,19 @@ resetBtn.addEventListener("click", (event) => {
   // THEN render score
 // update score in localStorage
 // pull value from localStorage on page load
+
+startBtnEl.addEventListener("click", (event) => {
+  startQuiz();
+  startBtnEl.disabled = true;
+})
+submitBtn.addEventListener("click", (event) => {
+  event.preventDefault();
+  // Render question -> Submit Answer -> validate answer -> update score -> render score -> render question
+  validateAnswer();
+})
+resetBtn.addEventListener("click", (event) => {
+  resetScore();
+})
+
 init();
  
